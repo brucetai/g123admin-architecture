@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>G123 Admin UI 架構重設計</title>
-    <meta name="description" content="G123 Admin 基於遊戲生命週期的邏輯性架構重組設計">
-    <meta name="keywords" content="G123 Admin, UI設計, 架構重組, 遊戲管理">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,284 +13,184 @@
             <p>基於遊戲生命週期的邏輯性架構重組</p>
         </div>
 
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="showTab('architecture')">🏗️ 架構設計</button>
-            <button class="tab-btn" onclick="showTab('comparison')">🔄 重構對比</button>
-            <button class="tab-btn" onclick="showTab('analysis')">📊 分析報告</button>
-        </div>
-
-        <!-- 架構設計頁面 -->
-        <div id="architecture" class="tab-content active">
-            <div class="architecture-grid">
-                <!-- 遊戲生命週期管理 -->
-                <div class="module-column">
-                    <div class="module-header">
-                        <div class="module-icon">🎮</div>
-                        <div class="module-title">遊戲生命週期管理</div>
-                        <div class="module-desc">管理遊戲從創建到運營的完整生命週期</div>
-                    </div>
-                    <ul class="category-list">
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">📋</span>
-                                遊戲規劃 (Game Planning)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">遊戲一覧 (Game List)</li>
-                                <li class="function-item">遊戲公開管理 (Game Public Management)</li>
-                            </ul>
-                        </li>
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">🚀</span>
-                                上線準備 (Pre-Launch)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">遊戲預覽 (Game Preview)</li>
-                                <li class="function-item">CBT (Closed Beta Test)</li>
-                                <li class="function-item">事前登録管理 (Pre-registration Management)</li>
-                                <li class="function-item">事前登録用戶 (Pre-registered Users)</li>
-                            </ul>
-                        </li>
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">📊</span>
-                                上線後管理 (Post-Launch)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">評級圖片 (Rating Images)</li>
-                            </ul>
-                        </li>
-                    </ul>
+        <!-- 直接顯示架構設計，移除導航標籤 -->
+        <div class="architecture-grid">
+            <!-- 遊戲生命週期管理 -->
+            <div class="module-column">
+                <div class="module-header">
+                    <div class="module-icon">🎮</div>
+                    <div class="module-title">遊戲生命週期管理</div>
+                    <div class="module-desc">管理遊戲從創建到運營的完整生命週期</div>
                 </div>
-
-                <!-- 內容管理 -->
-                <div class="module-column">
-                    <div class="module-header">
-                        <div class="module-icon">��</div>
-                        <div class="module-title">內容管理</div>
-                        <div class="module-desc">統一管理所有內容相關功能，包括SEO優化</div>
-                    </div>
-                    <ul class="category-list">
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">🎨</span>
-                                視覺內容 (Visual Content)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">圖片 (Images)</li>
-                                <li class="function-item">介紹橫幅 (Introductory Banners)</li>
-                                <li class="function-item">評級圖片 (Rating Images)</li>
-                            </ul>
-                        </li>
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">📰</span>
-                                文字內容 (Text Content)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">固定頁面 (Fixed Pages)</li>
-                                <li class="function-item">固定頁面追加 (Add Fixed Pages)</li>
-                                <li class="function-item">固定頁面CSS (Fixed Page CSS)</li>
-                                <li class="function-item">新聞 (News)</li>
-                            </ul>
-                        </li>
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">🏷️</span>
-                                分類管理 (Category Management)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">顯示設定 (Display Settings)</li>
-                                <li class="function-item">類型標籤 (Type Tags)</li>
-                                <li class="function-item">語言管理 (Language Management)</li>
-                            </ul>
-                        </li>
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">🔍</span>
-                                SEO優化 (SEO Optimization)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">G123 Meta設定 (G123 Meta Settings)</li>
-                                <li class="function-item">H5 Meta設定 (H5 Meta Settings)</li>
-                                <li class="function-item">G123 重定向設定 (G123 Redirect Settings)</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- 用戶與營運 -->
-                <div class="module-column">
-                    <div class="module-header">
-                        <div class="module-icon">👥</div>
-                        <div class="module-title">用戶與營運</div>
-                        <div class="module-desc">集中管理用戶相關的所有業務功能</div>
-                    </div>
-                    <ul class="category-list">
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">👤</span>
-                                用戶管理 (User Management)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">遊戲用戶 (Game Users)</li>
-                                <li class="function-item">系統用戶 (System Users)</li>
-                                <li class="function-item">黑名單 (Blacklist)</li>
-                                <li class="function-item">帳戶恢復 (Account Recovery)</li>
-                                <li class="function-item">決済での復旧 (Recovery by Payment)</li>
-                                <li class="function-item">用戶國際化設定 (User Internationalization Settings)</li>
-                                <li class="function-item">IM連攜變更 (IM Linkage Changes)</li>
-                            </ul>
-                        </li>
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">💰</span>
-                                付費系統 (Payment System)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">付費搜尋 (Payment Search)</li>
-                                <li class="function-item">退款申請歷史 (Refund Application History)</li>
-                                <li class="function-item">退款歷史 (Refund History)</li>
-                                <li class="function-item">卡片詐欺檢測 (Card Fraud Detection)</li>
-                                <li class="function-item">【PSP】 支払方法停止 ([PSP] Payment Method Suspension)</li>
-                                <li class="function-item">[PSP] NotifyUrl</li>
-                            </ul>
-                        </li>
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">🔐</span>
-                                認證管理 (Authentication Management)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">[AUTH] OIDC認證資訊 ([AUTH] OIDC Authentication Information)</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- 技術管理 -->
-                <div class="module-column">
-                    <div class="module-header">
-                        <div class="module-icon">⚙️</div>
-                        <div class="module-title">技術管理</div>
-                        <div class="module-desc">管理技術層面的配置和維護功能</div>
-                    </div>
-                    <ul class="category-list">
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">🛡️</span>
-                                安全設定 (Security Settings)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">【PSP】 リスクのIP設定 ([PSP] Risk IP Settings)</li>
-                            </ul>
-                        </li>
-                        <li class="category-item">
-                            <div class="category-title">
-                                <span class="category-icon">🔧</span>
-                                系統維護 (System Maintenance)
-                            </div>
-                            <ul class="function-list">
-                                <li class="function-item">快取管理 (Cache Management)</li>
-                                <li class="function-item">短縮URL (Shortened URL)</li>
-                                <li class="function-item">CTW News</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- 重構對比頁面 -->
-        <div id="comparison" class="tab-content">
-            <div class="comparison-section">
-                <h2 class="section-title">🔄 重構前後對比</h2>
-                <div class="comparison-grid">
-                    <div class="comparison-card before">
-                        <div class="comparison-header before">❌ 重構前 - 8個分散模組</div>
-                        <ul class="comparison-list">
-                            <li>🎮 ゲーム (Game)</li>
-                            <li>📋 事前登録 (Pre-registration)</li>
-                            <li>📝 固定ページ (Fixed Page)</li>
-                            <li>🎨 表示管理 (Display Management)</li>
-                            <li>🔍 SEO</li>
-                            <li>💰 課金 (Billing)</li>
-                            <li>👤 遊戲用戶 (Game User)</li>
-                            <li>⚙️ 設定 (Settings)</li>
+                <ul class="category-list">
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">📋</span>
+                            遊戲規劃 (Game Planning)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">遊戲一覧 (Game List)</li>
+                            <li class="function-item">遊戲公開管理 (Game Public Management)</li>
                         </ul>
-                    </div>
-                    <div class="comparison-card after">
-                        <div class="comparison-header after">✅ 重構後 - 4個邏輯模組</div>
-                        <ul class="comparison-list">
-                            <li>🎮 遊戲生命週期管理</li>
-                            <li>📝 內容管理 (含SEO優化)</li>
-                            <li>👥 用戶與營運</li>
-                            <li>⚙️ 技術管理</li>
+                    </li>
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">🚀</span>
+                            上線準備 (Pre-Launch)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">遊戲預覽 (Game Preview)</li>
+                            <li class="function-item">CBT (Closed Beta Test)</li>
+                            <li class="function-item">事前登録管理 (Pre-registration Management)</li>
+                            <li class="function-item">事前登録用戶 (Pre-registered Users)</li>
                         </ul>
-                    </div>
-                </div>
+                    </li>
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">📊</span>
+                            上線後管理 (Post-Launch)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">評級圖片 (Rating Images)</li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
 
-            <div class="stats-section">
-                <h2 class="section-title">📊 重構效果統計</h2>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value">8 → 4</div>
-                        <div class="stat-label">模組數量</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">-50%</div>
-                        <div class="stat-label">模組減少</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">35</div>
-                        <div class="stat-label">功能項目總數</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">0</div>
-                        <div class="stat-label">新增功能</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">+60%</div>
-                        <div class="stat-label">功能集中度</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">-33%</div>
-                        <div class="stat-label">導航點擊</div>
-                    </div>
+            <!-- 內容管理 -->
+            <div class="module-column">
+                <div class="module-header">
+                    <div class="module-icon">📝</div>
+                    <div class="module-title">內容管理</div>
+                    <div class="module-desc">統一管理所有內容相關功能，包括SEO優化</div>
                 </div>
+                <ul class="category-list">
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">🎨</span>
+                            視覺內容 (Visual Content)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">圖片 (Images)</li>
+                            <li class="function-item">介紹橫幅 (Introductory Banners)</li>
+                            <li class="function-item">評級圖片 (Rating Images)</li>
+                        </ul>
+                    </li>
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">📰</span>
+                            文字內容 (Text Content)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">固定頁面 (Fixed Pages)</li>
+                            <li class="function-item">固定頁面追加 (Add Fixed Pages)</li>
+                            <li class="function-item">固定頁面CSS (Fixed Page CSS)</li>
+                            <li class="function-item">新聞 (News)</li>
+                        </ul>
+                    </li>
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">🏷️</span>
+                            分類管理 (Category Management)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">顯示設定 (Display Settings)</li>
+                            <li class="function-item">類型標籤 (Type Tags)</li>
+                            <li class="function-item">語言管理 (Language Management)</li>
+                        </ul>
+                    </li>
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">🔍</span>
+                            SEO優化 (SEO Optimization)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">G123 Meta設定 (G123 Meta Settings)</li>
+                            <li class="function-item">H5 Meta設定 (H5 Meta Settings)</li>
+                            <li class="function-item">G123 重定向設定 (G123 Redirect Settings)</li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
-        </div>
 
-        <!-- 分析報告頁面 -->
-        <div id="analysis" class="tab-content">
-            <div class="analysis-section">
-                <h2 class="section-title">📋 架構分析報告</h2>
-                
-                <div class="analysis-item">
-                    <h3>🎯 重構目標</h3>
-                    <p>基於遊戲生命週期（上線前、中、後）來重新組織管理介面，提供更直觀、邏輯性強的用戶體驗。</p>
+            <!-- 用戶與營運 -->
+            <div class="module-column">
+                <div class="module-header">
+                    <div class="module-icon">👥</div>
+                    <div class="module-title">用戶與營運</div>
+                    <div class="module-desc">集中管理用戶相關的所有業務功能</div>
                 </div>
+                <ul class="category-list">
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">👤</span>
+                            用戶管理 (User Management)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">遊戲用戶 (Game Users)</li>
+                            <li class="function-item">系統用戶 (System Users)</li>
+                            <li class="function-item">黑名單 (Blacklist)</li>
+                            <li class="function-item">帳戶恢復 (Account Recovery)</li>
+                            <li class="function-item">決済での復旧 (Recovery by Payment)</li>
+                            <li class="function-item">用戶國際化設定 (User Internationalization Settings)</li>
+                            <li class="function-item">IM連攜變更 (IM Linkage Changes)</li>
+                        </ul>
+                    </li>
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">💰</span>
+                            付費系統 (Payment System)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">付費搜尋 (Payment Search)</li>
+                            <li class="function-item">退款申請歷史 (Refund Application History)</li>
+                            <li class="function-item">退款歷史 (Refund History)</li>
+                            <li class="function-item">卡片詐欺檢測 (Card Fraud Detection)</li>
+                            <li class="function-item">【PSP】 支払方法停止 ([PSP] Payment Method Suspension)</li>
+                            <li class="function-item">[PSP] NotifyUrl</li>
+                        </ul>
+                    </li>
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">🔐</span>
+                            認證管理 (Authentication Management)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">[AUTH] OIDC認證資訊 ([AUTH] OIDC Authentication Information)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-                <div class="analysis-item">
-                    <h3>🔧 主要修正</h3>
-                    <ul>
-                        <li><strong>SEO分類修正</strong>：從技術管理移入內容管理，符合業務流程邏輯</li>
-                        <li><strong>認證系統分類修正</strong>：【AUTH】 OIDC認證資訊移入認證管理</li>
-                        <li><strong>支付系統分類修正</strong>：【PSP】 NotifyUrl移入付費系統</li>
-                    </ul>
+            <!-- 技術管理 -->
+            <div class="module-column">
+                <div class="module-header">
+                    <div class="module-icon">⚙️</div>
+                    <div class="module-title">技術管理</div>
+                    <div class="module-desc">管理技術層面的配置和維護功能</div>
                 </div>
-
-                <div class="analysis-item">
-                    <h3>✅ 重構優勢</h3>
-                    <ul>
-                        <li><strong>邏輯性強</strong>：基於遊戲生命週期組織功能</li>
-                        <li><strong>工作流程優化</strong>：規劃 → 準備 → 預覽 → 監控</li>
-                        <li><strong>用戶體驗提升</strong>：減少導航層級，相關功能集中</li>
-                        <li><strong>擴展性</strong>：新功能容易歸類，模組化設計</li>
-                    </ul>
-                </div>
+                <ul class="category-list">
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">🛡️</span>
+                            安全設定 (Security Settings)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">【PSP】 リスクのIP設定 ([PSP] Risk IP Settings)</li>
+                        </ul>
+                    </li>
+                    <li class="category-item">
+                        <div class="category-title">
+                            <span class="category-icon">🔧</span>
+                            系統維護 (System Maintenance)
+                        </div>
+                        <ul class="function-list">
+                            <li class="function-item">快取管理 (Cache Management)</li>
+                            <li class="function-item">短縮URL (Shortened URL)</li>
+                            <li class="function-item">CTW News</li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
 
@@ -300,7 +198,5 @@
             <p>G123 Admin UI 架構重設計 © 2024 | 基於現有功能的邏輯性架構重組</p>
         </div>
     </div>
-
-    <script src="js/main.js"></script>
 </body>
 </html>
