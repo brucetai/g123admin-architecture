@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G123 Admin 重構前後差異對比</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .comparison-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-header h2 {
+            font-size: 1.4em;
+            color: #333;
+            margin-left: 10px;
+        }
+
+        .card-icon {
+            font-size: 1.8em;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .before-icon {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        .after-icon {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        }
+
+        .module-list {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+
+        .module-item {
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .module-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .module-main {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .module-sub {
+            margin-left: 20px;
+            color: #34495e;
+            font-size: 0.95em;
+        }
+
+        .module-sub-sub {
+            margin-left: 40px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .mapping-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .mapping-table th,
+        .mapping-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mapping-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .mapping-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-reorganized {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-unchanged {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .toggle-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #e9ecef;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .toggle-btn:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>G123 Admin 重構前後差異對比</h1>
+            <p>基於現有功能的邏輯性架構重組</p>
+        </div>
+
+        <div class="toggle-section">
+            <div class="toggle-buttons">
+                <button class="toggle-btn active" onclick="showSection('comparison')">架構對比</button>
+                <button class="toggle-btn" onclick="showSection('stats')">統計數據</button>
+                <button class="toggle-btn" onclick="showSection('mapping')">功能映射</button>
+            </div>
+        </div>
+
+        <div id="comparison" class="content-section active">
+            <div class="comparison-container">
+                <div class="comparison-card">
+                    <div class="card-header">
+                        <div class="card-icon before-icon">❌</div>
+                        <h2>重構前 - 功能分散</h2>
+                    </div>
+                    <div class="module-list">
+                        <div class="module-item">
+                            <div class="module-main">🎮 ゲーム (Game)</div>
+                            <div class="module-sub">├── 遊戲一覧</div>
+                            <div class="module-sub">├── 遊戲預覽</div>
+                            <div class="module-sub">├── CBT</div>
+                            <div class="module-sub">├── 遊戲公開管理</div>
+                            <div class="module-sub">└── 評級圖片</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">📋 事前登録 (Pre-registration)</div>
+                            <div class="module-sub">├── 事前登録管理</div>
+                            <div class="module-sub">└── 事前登録用戶</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">📝 固定ページ (Fixed Page)</div>
+                            <div class="module-sub">├── 固定頁面</div>
+                            <div class="module-sub">├── 固定頁面追加</div>
+                            <div class="module-sub">└── 固定頁面CSS</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">🎨 表示管理 (Display Management)</div>
+                            <div class="module-sub">├── 顯示設定</div>
+                            <div class="module-sub">├── 類型標籤</div>
+                            <div class="module-sub">├── 介紹橫幅</div>
+                            <div class="module-sub">├── 新聞</div>
+                            <div class="module-sub">└── 圖片</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">🔍 SEO</div>
+                            <div class="module-sub">├── G123 Meta設定</div>
+                            <div class="module-sub">├── H5 Meta設定</div>
+                            <div class="module-sub">└── G123 重定向設定</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">💰 課金 (Billing)</div>
+                            <div class="module-sub">├── 付費搜尋</div>
+                            <div class="module-sub">├── 退款申請歷史</div>
+                            <div class="module-sub">└── 退款歷史</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">👤 遊戲用戶 (Game User)</div>
+                            <div class="module-sub">├── 遊戲用戶</div>
+                            <div class="module-sub">├── IM連攜變更</div>
+                            <div class="module-sub">├── 卡片詐欺檢測</div>
+                            <div class="module-sub">├── 用戶國際化設定</div>
+                            <div class="module-sub">├── 黑名單</div>
+                            <div class="module-sub">├── 帳戶恢復</div>
+                            <div class="module-sub">└── 決済での復旧</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">⚙️ 設定 (Settings)</div>
+                            <div class="module-sub">├── 語言管理</div>
+                            <div class="module-sub">├── 快取管理</div>
+                            <div class="module-sub">├── 【PSP】 NotifyUrl</div>
+                            <div class="module-sub">├── 【PSP】 支払方法停止</div>
+                            <div class="module-sub">├── 【PSP】 リスクのIP設定</div>
+                            <div class="module-sub">├── 【AUTH】 OIDC認證資訊</div>
+                            <div class="module-sub">├── 短縮URL</div>
+                            <div class="module-sub">├── 系統用戶</div>
+                            <div class="module-sub">└── CTW News</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-card">
+                    <div class="card-header">
+                        <div class="card-icon after-icon">✅</div>
+                        <h2>重構後 - 邏輯架構</h2>
+                    </div>
+                    <div class="module-list">
+                        <div class="module-item">
+                            <div class="module-main">🎮 遊戲生命週期管理</div>
+                            <div class="module-sub">├── 📋 遊戲規劃</div>
+                            <div class="module-sub-sub">├── 遊戲一覧</div>
+                            <div class="module-sub-sub">└── 遊戲公開管理</div>
+                            <div class="module-sub">├── 🚀 上線準備</div>
+                            <div class="module-sub-sub">├── 遊戲預覽</div>
+                            <div class="module-sub-sub">├── CBT</div>
+                            <div class="module-sub-sub">├── 事前登録管理</div>
+                            <div class="module-sub-sub">└── 事前登録用戶</div>
+                            <div class="module-sub">└── 📊 上線後管理</div>
+                            <div class="module-sub-sub">└── 評級圖片</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">📝 內容管理</div>
+                            <div class="module-sub">├── 🎨 視覺內容</div>
+                            <div class="module-sub-sub">├── 圖片</div>
+                            <div class="module-sub-sub">├── 介紹橫幅</div>
+                            <div class="module-sub-sub">└── 評級圖片</div>
+                            <div class="module-sub">├── 📰 文字內容</div>
+                            <div class="module-sub-sub">├── 固定頁面</div>
+                            <div class="module-sub-sub">├── 固定頁面追加</div>
+                            <div class="module-sub-sub">├── 固定頁面CSS</div>
+                            <div class="module-sub-sub">└── 新聞</div>
+                            <div class="module-sub">└── 🏷️ 分類管理</div>
+                            <div class="module-sub-sub">├── 顯示設定</div>
+                            <div class="module-sub-sub">├── 類型標籤</div>
+                            <div class="module-sub-sub">└── 語言管理</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">👥 用戶與營運</div>
+                            <div class="module-sub">├── 👤 用戶管理</div>
+                            <div class="module-sub-sub">├── 遊戲用戶</div>
+                            <div class="module-sub-sub">├── 系統用戶</div>
+                            <div class="module-sub-sub">├── 黑名單</div>
+                            <div class="module-sub-sub">├── 帳戶恢復</div>
+                            <div class="module-sub-sub">├── 決済での復旧</div>
+                            <div class="module-sub-sub">└── 用戶國際化設定</div>
+                            <div class="module-sub">├── 💰 付費系統</div>
+                            <div class="module-sub-sub">├── 付費搜尋</div>
+                            <div class="module-sub-sub">├── 退款申請歷史</div>
+                            <div class="module-sub-sub">├── 退款歷史</div>
+                            <div class="module-sub-sub">├── 卡片詐欺檢測</div>
+                            <div class="module-sub-sub">└── 【PSP】 支払方法停止</div>
+                            <div class="module-sub">└── 🔗 第三方整合</div>
+                            <div class="module-sub-sub">├── IM連攜變更</div>
+                            <div class="module-sub-sub">├── 【AUTH】 OIDC認證資訊</div>
+                            <div class="module-sub-sub">└── 【PSP】 NotifyUrl</div>
+                        </div>
+                        
+                        <div class="module-item">
+                            <div class="module-main">⚙️ 技術管理</div>
+                            <div class="module-sub">├── 🔍 SEO優化</div>
+                            <div class="module-sub-sub">├── G123 Meta設定</div>
+                            <div class="module-sub-sub">├── H5 Meta設定</div>
+                            <div class="module-sub-sub">└── G123 重定向設定</div>
+                            <div class="module-sub">├── 🛡️ 安全設定</div>
+                            <div class="module-sub-sub">└── 【PSP】 リスクのIP設定</div>
+                            <div class="module-sub">└── 🔧 系統維護</div>
+                            <div class="module-sub-sub">├── 快取管理</div>
+                            <div class="module-sub-sub">├── 短縮URL</div>
+                            <div class="module-sub-sub">└── CTW News</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="stats" class="content-section">
+            <div class="stats-section">
+                <h2 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">重構統計數據</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">8 → 4</div>
+                        <div class="stat-label">模組數量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">-50%</div>
+                        <div class="stat-label">模組減少</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">35</div>
+                        <div class="stat-label">功能項目總數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">新增功能</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">+60%</div>
+                        <div class="stat-label">功能集中度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">-33%</div>
+                        <div class="stat-label">導航點擊</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mapping" class="content-section">
+            <div class="mapping-section">
+                <h2 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">功能重組映射表</h2>
+                <table class="mapping-table">
+                    <thead>
+                        <tr>
+                            <th>原模組</th>
+                            <th>功能項目</th>
+                            <th>新模組</th>
+                            <th>新分類</th>
+                            <th>狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ゲーム (Game)</td>
+                            <td>遊戲一覧</td>
+                            <td>遊戲生命週期管理</td>
+                            <td>遊戲規劃</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>ゲーム (Game)</td>
+                            <td>遊戲公開管理</td>
+                            <td>遊戲生命週期管理</td>
+                            <td>遊戲規劃</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>ゲーム (Game)</td>
+                            <td>遊戲預覽</td>
+                            <td>遊戲生命週期管理</td>
+                            <td>上線準備</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>ゲーム (Game)</td>
+                            <td>CBT</td>
+                            <td>遊戲生命週期管理</td>
+                            <td>上線準備</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>事前登録</td>
+                            <td>事前登録管理</td>
+                            <td>遊戲生命週期管理</td>
+                            <td>上線準備</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>事前登録</td>
+                            <td>事前登録用戶</td>
+                            <td>遊戲生命週期管理</td>
+                            <td>上線準備</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>ゲーム (Game)</td>
+                            <td>評級圖片</td>
+                            <td>遊戲生命週期管理</td>
+                            <td>上線後管理</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>表示管理</td>
+                            <td>圖片</td>
+                            <td>內容管理</td>
+                            <td>視覺內容</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>表示管理</td>
+                            <td>介紹橫幅</td>
+                            <td>內容管理</td>
+                            <td>視覺內容</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>固定ページ</td>
+                            <td>固定頁面</td>
+                            <td>內容管理</td>
+                            <td>文字內容</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>表示管理</td>
+                            <td>新聞</td>
+                            <td>內容管理</td>
+                            <td>文字內容</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>遊戲用戶</td>
+                            <td>遊戲用戶</td>
+                            <td>用戶與營運</td>
+                            <td>用戶管理</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>設定</td>
+                            <td>系統用戶</td>
+                            <td>用戶與營運</td>
+                            <td>用戶管理</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>課金</td>
+                            <td>付費搜尋</td>
+                            <td>用戶與營運</td>
+                            <td>付費系統</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                        <tr>
+                            <td>SEO</td>
+                            <td>G123 Meta設定</td>
+                            <td>技術管理</td>
+                            <td>SEO優化</td>
+                            <td><span class="status-badge status-unchanged">保持</span></td>
+                        </tr>
+                        <tr>
+                            <td>設定</td>
+                            <td>快取管理</td>
+                            <td>技術管理</td>
+                            <td>系統維護</td>
+                            <td><span class="status-badge status-reorganized">重組</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update button states
+            const buttons = document.querySelectorAll('.toggle-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

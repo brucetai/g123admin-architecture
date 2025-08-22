@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G123 Admin 完整最終架構設計</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .final-architecture {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .architecture-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 1.8em;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .module-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .module-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+
+        .module-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .module-desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-item {
+            margin: 12px 0;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .category-title {
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .category-icon {
+            margin-right: 8px;
+            font-size: 1.1em;
+        }
+
+        .function-list {
+            list-style: none;
+            margin-left: 20px;
+        }
+
+        .function-item {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin: 4px 0;
+            padding: 2px 0;
+        }
+
+        .function-item::before {
+            content: "├── ";
+            color: #bdc3c7;
+        }
+
+        .function-item:last-child::before {
+            content: "└── ";
+        }
+
+        .correction-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin: 8px 0;
+            font-size: 0.85em;
+            color: #856404;
+        }
+
+        .correction-note::before {
+            content: "🔧 修正: ";
+            font-weight: 600;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .comparison-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 1.6em;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .comparison-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .comparison-card.before {
+            border-color: #ff6b6b;
+        }
+
+        .comparison-card.after {
+            border-color: #4ecdc4;
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-header.before {
+            background: #ff6b6b;
+        }
+
+        .comparison-header.after {
+            background: #4ecdc4;
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .stats-title {
+            margin-bottom: 25px;
+            font-size: 1.6em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .corrections-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .corrections-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 1.6em;
+        }
+
+        .correction-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .correction-header {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .correction-desc {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .correction-before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .correction-before, .correction-after {
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .correction-before {
+            background: #ffe6e6;
+            border: 1px solid #ffcccc;
+        }
+
+        .correction-after {
+            background: #e6ffe6;
+            border: 1px solid #ccffcc;
+        }
+
+        .principles-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .principles-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 1.6em;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .principle-item {
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4ecdc4;
+            background: #f8f9fa;
+        }
+
+        .principle-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .principle-desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .correction-before-after {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>G123 Admin 完整最終架構設計</h1>
+            <p>基於現有功能的邏輯性架構重組 - 包含所有修正</p>
+        </div>
+
+        <div class="final-architecture">
+            <h2 class="architecture-title">�� 最終架構設計 (完整修正版)</h2>
+            <div class="module-grid">
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">��</div>
+                        <div class="module-name">遊戲生命週期管理</div>
+                    </div>
+                    <div class="module-desc">管理遊戲從創建到運營的完整生命週期</div>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">📋</span>
+                                遊戲規劃 (Game Planning)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">遊戲一覧</li>
+                                <li class="function-item">遊戲公開管理</li>
+                            </ul>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">🚀</span>
+                                上線準備 (Pre-Launch)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">遊戲預覽</li>
+                                <li class="function-item">CBT</li>
+                                <li class="function-item">事前登録管理</li>
+                                <li class="function-item">事前登録用戶</li>
+                            </ul>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">📊</span>
+                                上線後管理 (Post-Launch)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">評級圖片</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">📝</div>
+                        <div class="module-name">內容管理</div>
+                    </div>
+                    <div class="module-desc">統一管理所有內容相關功能，包括SEO優化</div>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">🎨</span>
+                                視覺內容 (Visual Content)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">圖片</li>
+                                <li class="function-item">介紹橫幅</li>
+                                <li class="function-item">評級圖片</li>
+                            </ul>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">📰</span>
+                                文字內容 (Text Content)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">固定頁面</li>
+                                <li class="function-item">固定頁面追加</li>
+                                <li class="function-item">固定頁面CSS</li>
+                                <li class="function-item">新聞</li>
+                            </ul>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">🏷️</span>
+                                分類管理 (Category Management)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">顯示設定</li>
+                                <li class="function-item">類型標籤</li>
+                                <li class="function-item">語言管理</li>
+                            </ul>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">🔍</span>
+                                SEO優化 (SEO Optimization)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">G123 Meta設定</li>
+                                <li class="function-item">H5 Meta設定</li>
+                                <li class="function-item">G123 重定向設定</li>
+                            </ul>
+                            <div class="correction-note">從技術管理移入內容管理，符合業務流程邏輯</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">👥</div>
+                        <div class="module-name">用戶與營運</div>
+                    </div>
+                    <div class="module-desc">集中管理用戶相關的所有業務功能</div>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">👤</span>
+                                用戶管理 (User Management)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">遊戲用戶</li>
+                                <li class="function-item">系統用戶</li>
+                                <li class="function-item">黑名單</li>
+                                <li class="function-item">帳戶恢復</li>
+                                <li class="function-item">決済での復旧</li>
+                                <li class="function-item">用戶國際化設定</li>
+                            </ul>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">💰</span>
+                                付費系統 (Payment System)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">付費搜尋</li>
+                                <li class="function-item">退款申請歷史</li>
+                                <li class="function-item">退款歷史</li>
+                                <li class="function-item">卡片詐欺檢測</li>
+                                <li class="function-item">【PSP】 支払方法停止</li>
+                                <li class="function-item">【PSP】 NotifyUrl</li>
+                            </ul>
+                            <div class="correction-note">【PSP】 NotifyUrl從第三方整合移入，屬於內部支付系統</div>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">🔐</span>
+                                認證管理 (Authentication Management)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">【AUTH】 OIDC認證資訊</li>
+                            </ul>
+                            <div class="correction-note">從第三方整合移入，屬於內部認證系統</div>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">🔗</span>
+                                第三方整合 (Third-party Integration)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">IM連攜變更</li>
+                            </ul>
+                            <div class="correction-note">只包含真正的第三方系統整合</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">⚙️</div>
+                        <div class="module-name">技術管理</div>
+                    </div>
+                    <div class="module-desc">管理技術層面的配置和維護功能</div>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">🛡️</span>
+                                安全設定 (Security Settings)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">【PSP】 リスクのIP設定</li>
+                            </ul>
+                        </li>
+                        <li class="category-item">
+                            <div class="category-title">
+                                <span class="category-icon">🔧</span>
+                                系統維護 (System Maintenance)
+                            </div>
+                            <ul class="function-list">
+                                <li class="function-item">快取管理</li>
+                                <li class="function-item">短縮URL</li>
+                                <li class="function-item">CTW News</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="corrections-section">
+            <h2 class="corrections-title">🔧 主要修正內容</h2>
+            
+            <div class="correction-item">
+                <div class="correction-header">1. SEO分類修正</div>
+                <div class="correction-desc">將SEO優化從技術管理移入內容管理，符合業務流程邏輯</div>
+                <div class="correction-before-after">
+                    <div class="correction-before">
+                        <strong>修正前：</strong><br>
+                        ⚙️ 技術管理<br>
+                        ├── 🔍 SEO優化
+                    </div>
+                    <div class="correction-after">
+                        <strong>修正後：</strong><br>
+                        📝 內容管理<br>
+                        └── 🔍 SEO優化
+                    </div>
+                </div>
+            </div>
+
+            <div class="correction-item">
+                <div class="correction-header">2. 認證系統分類修正</div>
+                <div class="correction-desc">【AUTH】 OIDC認證資訊從第三方整合移入認證管理，屬於內部系統</div>
+                <div class="correction-before-after">
+                    <div class="correction-before">
+                        <strong>修正前：</strong><br>
+                        🔗 第三方整合<br>
+                        ├── 【AUTH】 OIDC認證資訊
+                    </div>
+                    <div class="correction-after">
+                        <strong>修正後：</strong><br>
+                        🔐 認證管理<br>
+                        └── 【AUTH】 OIDC認證資訊
+                    </div>
+                </div>
+            </div>
+
+            <div class="correction-item">
+                <div class="correction-header">3. 支付系統分類修正</div>
+                <div class="correction-desc">【PSP】 NotifyUrl從第三方整合移入付費系統，屬於內部支付系統</div>
+                <div class="correction-before-after">
+                    <div class="correction-before">
+                        <strong>修正前：</strong><br>
+                        🔗 第三方整合<br>
+                        ├── 【PSP】 NotifyUrl
+                    </div>
+                    <div class="correction-after">
+                        <strong>修正後：</strong><br>
+                        💰 付費系統<br>
+                        └── 【PSP】 NotifyUrl
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2 class="comparison-title">🔄 重構前後對比</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card before">
+                    <div class="comparison-header before">❌ 重構前 - 8個分散模組</div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin: 8px 0; padding: 5px 0;">🎮 ゲーム (Game)</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">📋 事前登録 (Pre-registration)</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">📝 固定ページ (Fixed Page)</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">🎨 表示管理 (Display Management)</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">🔍 SEO</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">💰 課金 (Billing)</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">👤 遊戲用戶 (Game User)</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">⚙️ 設定 (Settings)</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <div class="comparison-header after">✅ 重構後 - 4個邏輯模組</div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin: 8px 0; padding: 5px 0;">🎮 遊戲生命週期管理</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">📝 內容管理 (含SEO優化)</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">👥 用戶與營運</li>
+                        <li style="margin: 8px 0; padding: 5px 0;">⚙️ 技術管理</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2 class="stats-title">📊 重構效果統計</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">8 → 4</div>
+                    <div class="stat-label">模組數量</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">-50%</div>
+                    <div class="stat-label">模組減少</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">35</div>
+                    <div class="stat-label">功能項目總數</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">新增功能</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">+60%</div>
+                    <div class="stat-label">功能集中度</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">-33%</div>
+                    <div class="stat-label">導航點擊</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="principles-section">
+            <h2 class="principles-title">🎯 重構原則與優勢</h2>
+            <div class="principles-grid">
+                <div class="principle-item">
+                    <div class="principle-title">🔍 SEO分類修正</div>
+                    <div class="principle-desc">
+                        將SEO優化從技術管理移入內容管理，符合業務流程邏輯。
+                        SEO設定與內容創建緊密相關，提升工作流程順暢性。
+                    </div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">🔐 認證系統分類修正</div>
+                    <div class="principle-desc">
+                        【AUTH】 OIDC認證資訊從第三方整合移入認證管理，
+                        準確反映其作為內部認證系統的屬性。
+                    </div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">�� 支付系統分類修正</div>
+                    <div class="principle-desc">
+                        【PSP】 NotifyUrl從第三方整合移入付費系統，
+                        準確反映其作為內部支付系統的屬性。
+                    </div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">📋 功能完整性</div>
+                    <div class="principle-desc">
+                        保持所有35個現有功能，不新增任何功能。
+                        只重新組織架構，確保功能不遺漏。
+                    </div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">�� 生命週期邏輯</div>
+                    <div class="principle-desc">
+                        基於遊戲從創建到運營的完整生命週期組織功能。
+                        遊戲規劃 → 上線準備 → 上線後管理。
+                    </div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">👥 用戶體驗優化</div>
+                    <div class="principle-desc">
+                        相關功能集中管理，減少跨模組操作。
+                        符合用戶思維模式，降低學習成本。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
